@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untuk Perempuan Paling Cantik di Dunia ❤️</title>
+  
+  <!-- SEO & Meta Tags -->
+  <meta name="description" content="Sebuah ungkapan hati romantis dan permintaan maaf yang tulus khusus untuk kamu.">
+  <meta name="theme-color" content="#FFDBE9">
+  
+  <!-- Google Fonts: Great Vibes (Handwriting) & Plus Jakarta Sans (Modern UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sacramento&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Canvas Overlay untuk Partikel (Bintang, Kelopak Sakura, Hati, Confetti, Sparkle) -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Control Musik Romantis (Audio Player & Synthesizer Fallback) -->
+  <div class="music-controller" id="musicController">
+    <button id="musicToggleBtn" class="music-btn" aria-label="Putar Musik">
+      <span class="music-icon" id="musicIcon">🎵</span>
+      <span class="music-text" id="musicText">Play Music</span>
+      <div class="music-waves" id="musicWaves">
+        <span></span><span></span><span></span>
+      </div>
+    </button>
+    <!-- Element Audio (Dapat diganti file audio lokal romantis.mp3) -->
+    <audio id="romanticAudio" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112188.mp3"></audio>
+  </div>
+
+  <!-- Background Layer untuk Transisi (Gradasi Pink Pastel -> Starry Night -> Love Theme) -->
+  <div class="bg-layer" id="bgLayer"></div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="app-container">
+
+    <!-- ==========================================
+         SEKSI 1: AMPLOP VINTAGE & TEKS PERTAMA
+         ========================================== -->
+    <section id="envelopeSection" class="section active">
+      <div class="envelope-wrapper">
+        <div class="envelope" id="envelope">
+          <div class="envelope-flap" id="envelopeFlap"></div>
+          <div class="envelope-pocket"></div>
+          <div class="envelope-ribbon">
+            <span class="ribbon-bow">🎀</span>
+          </div>
+          <div class="envelope-seal">❤️</div>
+        </div>
+      </div>
+      
+      <div class="envelope-hint">
+        <div class="envelope-emoji">💌</div>
+        <h1 class="envelope-text">Ketuk untuk melihat perempuan paling cantik di dunia ❤️</h1>
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         SEKSI 2: ISI SURAT CINTA
+         ========================================== -->
+    <section id="letterSection" class="section hidden">
+      <div class="letter-card glass-panel" id="letterCard">
+        <div class="letter-stamp">💌</div>
+        <div class="letter-content">
+          <h2 class="letter-title">Untuk perempuan yang paling aku sayang... ❤️</h2>
+          <div class="letter-body">
+            <p>Hai Sayang...</p>
+            <p>Kalau kamu lagi baca surat ini, berarti kamu sudah membuka sesuatu yang aku buat khusus buat kamu.</p>
+            <p>Mungkin ini bukan hadiah yang mahal.</p>
+            <p>Tapi setiap bagian di website ini aku buat sambil mengingat kamu.</p>
+            <p>Aku cuma ingin kamu tahu...</p>
+            <p>Sejak kamu hadir, hidupku jadi jauh lebih berwarna.</p>
+            <p>Dan sampai sekarang...</p>
+            <p>Kamu tetap perempuan paling cantik di mataku.</p>
+            <p>Jadi...</p>
+            <p class="letter-question">Boleh nggak aku nunjukin alasannya? ❤️</p>
+          </div>
+        </div>
+        <div class="letter-footer">
+          <button id="btnSeeBeauty" class="btn-primary glow-button">
+            ❤️ Lihat Perempuan Tercantik ❤️
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         SEKSI 3: GALERI FOTO POLAROID
+         ========================================== -->
+    <section id="gallerySection" class="section hidden">
+      <div class="gallery-container">
+        
+        <!-- Header / Indikator Foto -->
+        <div class="gallery-header glass-badge">
+          <span class="gallery-counter" id="photoCounter">Foto 1 dari 6</span>
+          <span class="gallery-hint">Ketuk foto untuk lanjut 💕</span>
+        </div>
+
+        <!-- Polaroid Frame Wrapper -->
+        <div class="polaroid-wrapper">
+          <div class="polaroid-card" id="polaroidCard">
+            <div class="polaroid-tape"></div>
+            <div class="polaroid-photo-frame">
+              <img id="polaroidImage" src="" alt="Foto Kenangan" class="polaroid-img" />
+              <div id="polaroidPlaceholder" class="polaroid-placeholder hidden">
+                <span class="placeholder-icon">📸</span>
+                <span class="placeholder-text" id="placeholderFilename">foto1.jpg</span>
+                <small class="placeholder-sub">Letakkan file foto Anda di folder utama</small>
+              </div>
+            </div>
+            <div class="polaroid-caption">
+              <p id="polaroidText" class="caption-text"></p>
+            </div>
+            <div class="polaroid-sparkles">✨</div>
+          </div>
+        </div>
+
+        <!-- Tombol Navigasi Manual Tambahan (Opsional & Mobile Friendly) -->
+        <div class="gallery-controls">
+          <button id="btnNextPhoto" class="btn-secondary">
+            Lanjut Foto Berikutnya ➔
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         SEKSI 4: SURAT PERMINTAAN MAAF & SUPRISI MALAM BINTANG
+         ========================================== -->
+    <section id="apologySection" class="section hidden">
+      <div class="apology-card glass-panel dark-glass">
+        
+        <div class="apology-header">
+          <div class="moon-icon">🌙</div>
+          <div class="stars-sub">✨ ✨ ✨</div>
+        </div>
+
+        <!-- Area Efek Mengetik -->
+        <div class="typing-container">
+          <div id="typingOutput" class="typing-text"></div>
+          <span class="typing-cursor" id="typingCursor">|</span>
+        </div>
+
+        <!-- Area Pertanyaan & Tombol (Tampil setelah typing selesai) -->
+        <div id="questionContainer" class="question-container hidden">
+          <h2 class="question-title">Mau baikan lagi nggak? 🥺❤️</h2>
+          
+          <div class="answer-buttons">
+            <button id="btnYes" class="btn-love">❤️ Iya</button>
+            <button id="btnNo" class="btn-evasive">💔 Tidak</button>
+          </div>
+
+          <!-- Pesan kecil jika tombol tidak dihindari beberapa kali -->
+          <div id="reassuranceMessage" class="reassurance-note hidden">
+            "Apa pun jawabanmu nanti, aku akan tetap menghargainya. Website ini kubuat hanya untuk menunjukkan bahwa aku sungguh menyesal dan ingin memperbaiki diri. ❤️"
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         SEKSI 5: SELEBRASI IYA & PELUK VIRTUAL
+         ========================================== -->
+    <section id="reconciliationSection" class="section hidden">
+      <div class="reconciliation-card glass-panel">
+        
+        <div class="beating-heart-wrapper">
+          <div class="beating-heart">❤️</div>
+          <div class="heart-glow"></div>
+        </div>
+
+        <h2 class="reconciliation-title">Terima kasih Sayang ❤️</h2>
+
+        <div class="reconciliation-body">
+          <p>Terima kasih sudah memberiku kesempatan lagi.</p>
+          <p>Aku tahu kepercayaanmu tidak bisa kembali hanya karena satu permintaan maaf.</p>
+          <p>Karena itu aku akan membuktikannya lewat tindakan.</p>
+          <p>Aku akan lebih menepati janji.</p>
+          <p>Aku akan lebih meluangkan waktu buat kamu.</p>
+          <p>Aku akan lebih menjaga sikapku.</p>
+          <p>Aku akan berhenti melakukan hal-hal yang membuatmu merasa tidak dihargai.</p>
+          <p>Aku akan menjadi laki-laki yang lebih baik setiap harinya.</p>
+          <p>Aku mungkin belum sempurna.</p>
+          <p>Tapi aku akan terus belajar agar tidak mengulang kesalahan yang sama.</p>
+          <br>
+          <p class="love-declaration">Aku sayang kamu.</p>
+          <p class="love-declaration">Hari ini.</p>
+          <p class="love-declaration">Besok.</p>
+          <p class="love-declaration">Dan selama kamu masih mengizinkan aku berada di sampingmu. ❤️</p>
+        </div>
+
+        <div class="reconciliation-footer">
+          <button id="btnVirtualHug" class="btn-hug glow-button">
+            🤗 Peluk Virtual
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       MODAL / POPUP PELUK VIRTUAL (I LOVE YOU FOREVER)
+       ========================================== -->
+  <div id="hugModal" class="modal-overlay hidden">
+    <div class="modal-content glass-panel modal-hug">
+      <button id="btnCloseModal" class="modal-close-btn">&times;</button>
+      <div class="hug-hearts-animation">💖 🫂 💖</div>
+      <h1 class="hug-text-glow">I Love You Forever ❤️</h1>
+      <p class="hug-subtext">Pelukan terhangat khusus buat kamu... Kasih tahu aku kalau kamu sudah baca ini yaa 🥰</p>
+    </div>
+  </div>
+
+  <!-- JavaScript Utama -->
+  <script src="script.js"></script>
+</body>
+</html>

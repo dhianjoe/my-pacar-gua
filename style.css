@@ -1,0 +1,1043 @@
+/* ==========================================================================
+   DESAIN SYSTEM & VARIABEL UTAMA
+   ========================================================================== */
+:root {
+  /* Warna utama */
+  --pink-pastel: #FFDBE9;
+  --pink-soft: #FFF0F5;
+  --pink-accent: #FF6B95;
+  --pink-deep: #E84A75;
+  --cream-vintage: #FFFDD0;
+  --cream-soft: #FAF0E6;
+  --gold-accent: #D4AF37;
+  --gold-glow: #FFD700;
+  --white-pure: #FFFFFF;
+  --white-glass: rgba(255, 255, 255, 0.75);
+  --white-glass-border: rgba(255, 255, 255, 0.85);
+
+  /* Tema Malam (Starry Night) */
+  --dark-night-bg: linear-gradient(135deg, #0b132b 0%, #1c2541 50%, #3a506b 100%);
+  --dark-glass: rgba(15, 23, 42, 0.65);
+  --dark-border: rgba(212, 175, 55, 0.3);
+
+  /* Font Family */
+  --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-handwriting: 'Dancing Script', 'Sacramento', 'Great Vibes', cursive;
+
+  /* Elevasi / Shadow */
+  --shadow-soft: 0 10px 30px rgba(232, 74, 117, 0.15);
+  --shadow-glass: 0 20px 50px rgba(0, 0, 0, 0.1);
+  --shadow-polaroid: 0 15px 35px rgba(0, 0, 0, 0.2);
+  
+  /* Transisi Standard */
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-fast: all 0.2s ease;
+}
+
+/* Reset CSS Standard */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-ui);
+  background-color: var(--pink-soft);
+  color: #4A3B40;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   PARTICLE CANVAS & BACKGROUND LAYER
+   ========================================================================== */
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bg-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFDBE9 40%, #FFF5EE 80%, #FFE4E1 100%);
+  z-index: 1;
+  transition: background 1.5s ease, opacity 1.5s ease;
+}
+
+/* Variasi Latar Belakang saat Pindah Fase */
+.bg-layer.starry-night {
+  background: linear-gradient(135deg, #090A0F 0%, #121829 40%, #1B263B 70%, #0D1B2A 100%);
+}
+
+.bg-layer.love-hearts {
+  background: linear-gradient(135deg, #FFB6C1 0%, #FF6B95 40%, #FFC0CB 70%, #FFE4E1 100%);
+}
+
+/* ==========================================================================
+   CONTROLLER MUSIK
+   ========================================================================== */
+.music-controller {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.music-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  padding: 10px 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(238, 108, 144, 0.2);
+  transition: var(--transition-smooth);
+}
+
+.music-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(238, 108, 144, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.music-icon {
+  font-size: 1.2rem;
+  animation: pulse-spin 3s infinite linear;
+}
+
+.music-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6B4E57;
+}
+
+/* Wave Animation untuk Musik */
+.music-waves {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 14px;
+}
+
+.music-waves span {
+  width: 3px;
+  height: 4px;
+  background-color: var(--pink-accent);
+  border-radius: 3px;
+  transition: height 0.3s ease;
+}
+
+.music-controller.playing .music-waves span:nth-child(1) { animation: wave 0.8s infinite ease-in-out alternate; }
+.music-controller.playing .music-waves span:nth-child(2) { animation: wave 0.8s infinite ease-in-out alternate 0.2s; }
+.music-controller.playing .music-waves span:nth-child(3) { animation: wave 0.8s infinite ease-in-out alternate 0.4s; }
+
+@keyframes wave {
+  0% { height: 4px; }
+  100% { height: 16px; }
+}
+
+@keyframes pulse-spin {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   CONTAINER & SECTION CONTROLS
+   ========================================================================== */
+.app-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.section {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  position: absolute;
+}
+
+.section.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  position: relative;
+}
+
+/* Utility Class Hidden - Pastikan display: none !important */
+.hidden {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+.section.hidden {
+  display: none !important;
+}
+
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+/* Glassmorphism Panel Common Class */
+.glass-panel {
+  background: var(--white-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--white-glass-border);
+  border-radius: 28px;
+  box-shadow: var(--shadow-glass);
+  padding: 36px 28px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  padding: 8px 18px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   SEKSI 1: AMPLOP VINTAGE 3D ANIMATION
+   ========================================================================== */
+.envelope-wrapper {
+  perspective: 1000px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.envelope {
+  position: relative;
+  width: 280px;
+  height: 190px;
+  background-color: var(--cream-vintage);
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(220, 150, 170, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.15);
+  border: 2px solid #F5E6CA;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: float 4s ease-in-out infinite;
+  transition: transform 0.5s ease;
+}
+
+.envelope:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+/* Flap Atas Amplop */
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 140px solid transparent;
+  border-right: 140px solid transparent;
+  border-top: 105px solid #EEDCC0;
+  transform-origin: top center;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 4;
+}
+
+.envelope.open .envelope-flap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+/* Pocket Samping & Bawah Amplop */
+.envelope-pocket {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 140px solid #FAF0E6;
+  border-right: 140px solid #F7E7D0;
+  border-bottom: 105px solid #F3DFC5;
+  border-radius: 0 0 12px 12px;
+  z-index: 3;
+}
+
+/* Ribbon & Wax Seal */
+.envelope-ribbon {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease;
+}
+
+.ribbon-bow {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+.envelope-seal {
+  position: absolute;
+  z-index: 5;
+  top: 45%;
+  font-size: 1.8rem;
+  background: var(--pink-accent);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(232, 74, 117, 0.4);
+  border: 2px solid #FFF;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.envelope.open .envelope-seal,
+.envelope.open .envelope-ribbon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.envelope-hint {
+  text-align: center;
+  max-width: 320px;
+}
+
+.envelope-emoji {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  animation: bounce 2s infinite;
+}
+
+.envelope-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #6C4B5E;
+  line-height: 1.5;
+  text-shadow: 0 2px 4px rgba(255,255,255,0.8);
+}
+
+/* ==========================================================================
+   SEKSI 2: SURAT CINTA (HANDWRITING & EFEK KERTAS)
+   ========================================================================== */
+.letter-card {
+  background: linear-gradient(180deg, #FFFDF8 0%, #FAF6ED 100%);
+  border: 2px solid #F0E6D2;
+  box-shadow: 0 25px 60px rgba(180, 120, 140, 0.2);
+  padding: 40px 32px;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+}
+
+.letter-stamp {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 2.2rem;
+  opacity: 0.8;
+}
+
+.letter-title {
+  font-family: var(--font-handwriting);
+  font-size: 2.2rem;
+  color: var(--pink-deep);
+  margin-bottom: 24px;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.letter-body {
+  font-family: var(--font-handwriting);
+  font-size: 1.65rem;
+  color: #4A3843;
+  line-height: 1.8;
+  text-align: left;
+}
+
+.letter-body p {
+  margin-bottom: 12px;
+}
+
+.letter-question {
+  font-size: 1.85rem !important;
+  color: var(--pink-accent);
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px !important;
+}
+
+.letter-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   SEKSI 3: GALERI FOTO POLAROID
+   ========================================================================== */
+.gallery-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 380px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5C434E;
+}
+
+.polaroid-wrapper {
+  perspective: 1000px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.polaroid-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: var(--white-pure);
+  padding: 18px 18px 24px 18px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-polaroid);
+  cursor: pointer;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+  transform: rotate(-2deg);
+}
+
+.polaroid-card:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.polaroid-card.zoom-fade {
+  transform: scale(0.9) rotate(4deg);
+  opacity: 0;
+}
+
+.polaroid-tape {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 30px;
+  background: rgba(255, 235, 205, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px dashed rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  z-index: 5;
+}
+
+.polaroid-photo-frame {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  background-color: #F8F5F0;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #EAE3D2;
+}
+
+.polaroid-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.polaroid-card:hover .polaroid-img {
+  transform: scale(1.04);
+}
+
+/* Fallback Placeholder jika Foto Belum Ada */
+.polaroid-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  color: #8C6D7B;
+}
+
+.placeholder-icon {
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.placeholder-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--pink-deep);
+  margin-bottom: 6px;
+}
+
+.placeholder-sub {
+  font-size: 0.8rem;
+  color: #9E828F;
+}
+
+.polaroid-caption {
+  margin-top: 18px;
+  text-align: center;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.caption-text {
+  font-family: var(--font-handwriting);
+  font-size: 1.6rem;
+  color: #3D2B33;
+  line-height: 1.4;
+}
+
+.polaroid-sparkles {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.gallery-controls {
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   SEKSI 4: STARRY NIGHT & EFEK MENGETIK
+   ========================================================================== */
+.dark-glass {
+  background: var(--dark-glass) !important;
+  border-color: var(--dark-border) !important;
+  color: #E2E8F0 !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+.apology-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.moon-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 15px rgba(255, 235, 150, 0.6));
+  animation: float 5s ease-in-out infinite;
+}
+
+.stars-sub {
+  font-size: 0.9rem;
+  color: var(--gold-glow);
+  letter-spacing: 4px;
+}
+
+.typing-container {
+  min-height: 220px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #F1F5F9;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-break: break-word;
+  position: relative;
+  padding: 10px;
+}
+
+.typing-text {
+  display: inline;
+}
+
+.typing-cursor {
+  font-weight: bold;
+  color: var(--gold-glow);
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.question-container {
+  margin-top: 30px;
+  text-align: center;
+  animation: fadeIn 1s ease forwards;
+}
+
+.question-title {
+  font-size: 1.8rem;
+  color: var(--gold-glow);
+  margin-bottom: 24px;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.answer-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  min-height: 60px;
+}
+
+/* Evasive Button Style */
+.btn-evasive {
+  position: relative;
+  background: rgba(239, 68, 68, 0.2);
+  color: #FCA5A5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+
+.reassurance-note {
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: var(--pink-pastel);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 14px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  line-height: 1.6;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+/* ==========================================================================
+   SEKSI 5: SELEBRASI RECONCILIATION & PELUK VIRTUAL
+   ========================================================================== */
+.beating-heart-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.beating-heart {
+  font-size: 4.5rem;
+  animation: heartBeat 1.2s infinite ease-in-out;
+  z-index: 2;
+  filter: drop-shadow(0 0 20px rgba(255, 107, 149, 0.6));
+}
+
+.heart-glow {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 107, 149, 0.5) 0%, rgba(255, 107, 149, 0) 70%);
+  border-radius: 50%;
+  animation: heartPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.25); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.2); }
+  70% { transform: scale(1); }
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  50% { transform: scale(1.6); opacity: 0.2; }
+  100% { transform: scale(0.8); opacity: 0.8; }
+}
+
+.reconciliation-title {
+  font-size: 2.2rem;
+  color: var(--pink-deep);
+  text-align: center;
+  margin-bottom: 24px;
+  font-weight: 800;
+}
+
+.reconciliation-body {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #4A3540;
+  text-align: center;
+}
+
+.love-declaration {
+  font-weight: 700;
+  color: var(--pink-deep);
+  font-size: 1.15rem;
+}
+
+.reconciliation-footer {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   MODAL PELUK VIRTUAL
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.modal-hug {
+  text-align: center;
+  max-width: 440px;
+  border: 2px solid var(--gold-glow) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.5) !important;
+  animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #8C6D7B;
+  cursor: pointer;
+}
+
+.hug-hearts-animation {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.hug-text-glow {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--pink-deep);
+  margin-bottom: 12px;
+  text-shadow: 0 0 15px rgba(232, 74, 117, 0.4);
+}
+
+.hug-subtext {
+  font-size: 0.95rem;
+  color: #6C4B5E;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   BUTTON DESAIN COMMON
+   ========================================================================== */
+.btn-primary, .btn-love, .btn-hug {
+  background: linear-gradient(135deg, #FF6B95 0%, #E84A75 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(232, 74, 117, 0.35);
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover, .btn-love:hover, .btn-hug:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(232, 74, 117, 0.45);
+  background: linear-gradient(135deg, #FF7B9F 0%, #F55580 100%);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--pink-deep);
+  border: 1px solid rgba(232, 74, 117, 0.3);
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.btn-secondary:hover {
+  background: white;
+  border-color: var(--pink-deep);
+  transform: translateY(-2px);
+}
+
+.glow-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+  transform: scale(0);
+  transition: transform 0.6s ease-out;
+}
+
+.glow-button:hover::after {
+  transform: scale(1);
+}
+
+/* ==========================================================================
+   ANIMASI KEYFRAMES & UTILITY
+   ========================================================================== */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   RESPONSIVE MOBILE & SMARTPHONE OPTIMIZATION (< 480px & < 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 12px;
+  }
+
+  .music-controller {
+    top: 12px;
+    right: 12px;
+  }
+
+  .music-btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+
+  .music-text {
+    font-size: 0.78rem;
+  }
+
+  .glass-panel {
+    padding: 28px 20px;
+    border-radius: 24px;
+  }
+
+  .envelope {
+    width: 250px;
+    height: 170px;
+  }
+
+  .envelope-flap {
+    border-left-width: 125px;
+    border-right-width: 125px;
+    border-top-width: 95px;
+  }
+
+  .envelope-pocket {
+    border-left-width: 125px;
+    border-right-width: 125px;
+    border-bottom-width: 95px;
+  }
+
+  .envelope-text {
+    font-size: 1.15rem;
+  }
+
+  .letter-card {
+    padding: 30px 20px;
+  }
+
+  .letter-title {
+    font-size: 1.85rem;
+  }
+
+  .letter-body {
+    font-size: 1.45rem;
+    line-height: 1.6;
+  }
+
+  .letter-question {
+    font-size: 1.6rem !important;
+  }
+
+  .polaroid-card {
+    max-width: 340px;
+    padding: 14px 14px 20px 14px;
+  }
+
+  .polaroid-photo-frame {
+    height: 300px;
+  }
+
+  .caption-text {
+    font-size: 1.4rem;
+  }
+
+  .typing-container {
+    font-size: 0.98rem;
+    line-height: 1.7;
+    max-height: 52vh;
+    overflow-y: auto;
+  }
+
+  .question-title {
+    font-size: 1.55rem;
+  }
+
+  .btn-primary, .btn-love, .btn-hug {
+    font-size: 1rem;
+    padding: 12px 26px;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .btn-secondary {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
+}
+
+/* Extra Small Smartphones (< 420px) */
+@media (max-width: 420px) {
+  .envelope {
+    width: 220px;
+    height: 150px;
+  }
+
+  .envelope-flap {
+    border-left-width: 110px;
+    border-right-width: 110px;
+    border-top-width: 85px;
+  }
+
+  .envelope-pocket {
+    border-left-width: 110px;
+    border-right-width: 110px;
+    border-bottom-width: 85px;
+  }
+
+  .envelope-text {
+    font-size: 1.05rem;
+  }
+
+  .letter-title {
+    font-size: 1.65rem;
+  }
+
+  .letter-body {
+    font-size: 1.3rem;
+  }
+
+  .polaroid-card {
+    max-width: 290px;
+  }
+
+  .polaroid-photo-frame {
+    height: 260px;
+  }
+
+  .caption-text {
+    font-size: 1.28rem;
+  }
+
+  .reconciliation-title {
+    font-size: 1.8rem;
+  }
+
+  .reconciliation-body {
+    font-size: 0.95rem;
+  }
+
+  .modal-hug {
+    padding: 24px 16px;
+    max-width: 90vw;
+  }
+
+  .hug-text-glow {
+    font-size: 1.8rem;
+  }
+
+  .hug-subtext {
+    font-size: 0.88rem;
+  }
+}
